@@ -221,7 +221,7 @@
                 if (!bandSelect) continue;
                 for (let j = 0; j < bandSelect.options.length; j++) {
                     const opt = bandSelect.options[j];
-                    if (vrxType === "rapid-fire" && (opt.value === "X" || opt.value === "LL")) {
+                    if (vrxType === "rapid-fire" && (opt.value === "LL")) {
                         opt.disabled = true;
                         opt.style.color = "#bbb";
                     } else {
@@ -229,7 +229,7 @@
                         opt.style.color = "";
                     }
                 }
-                if (vrxType === "rapid-fire" && (bandSelect.value === "X" || bandSelect.value === "LL")) {
+                if (vrxType === "rapid-fire" && (bandSelect.value === "LL")) {
                     bandSelect.value = "A";
                 }
             }
@@ -450,3 +450,4 @@
     </script>
 </body>
 </html>
+
