@@ -245,21 +245,25 @@ bool authenticateSTM32() {
 // --- Запуск системи після кнопки ---
 void activateSystem() {
     Serial.println("Активація системи...");
-    Serial.print("Підключення до WiFi");
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
-    Serial.println("\nWiFi підключено!");
-    Serial.print("IP адреса: ");
-    Serial.println(WiFi.localIP());
+
+    IPAddress apIP(10, 0, 0, 1);
+    IPAddress gateway(10, 0, 0, 1);
+    IPAddress subnet(255, 255, 255, 0);
+
+    WiFi.softAPConfig(apIP, gateway, subnet);
+    WiFi.softAP("VRX-Config", "freeAzov");
+
+    Serial.println("WiFi AP піднято!");
+    Serial.print("AP IP address: ");
+    Serial.println(WiFi.softAPIP());
+
     stm32_authenticated = authenticateSTM32();
     server.begin();
     Serial.println("Веб-сервер запущено!");
     Serial.print("http://");
-    Serial.println(WiFi.localIP());
+    Serial.println(WiFi.softAPIP());
 }
+
 
 void setup() {
     Serial.begin(115200);
