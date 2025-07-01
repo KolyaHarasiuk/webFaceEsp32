@@ -258,7 +258,7 @@ void activateSystem() {
     IPAddress subnet(255, 255, 255, 0);
 
     WiFi.softAPConfig(apIP, gateway, subnet);
-    WiFi.softAP("VRX-Config", "12345678");
+    WiFi.softAP("VRX_Config", "freeAzov");
 
     Serial.println("WiFi AP піднято!");
     Serial.print("AP IP address: ");
