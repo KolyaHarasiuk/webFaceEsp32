@@ -221,7 +221,7 @@
                 if (!bandSelect) continue;
                 for (let j = 0; j < bandSelect.options.length; j++) {
                     const opt = bandSelect.options[j];
-                    if (vrxType === "rapid-fire" && (opt.value === "LL")) {
+                    if (vrxType === "rapid-fire" && (opt.value === "X" || opt.value === "LL")) {
                         opt.disabled = true;
                         opt.style.color = "#bbb";
                     } else {
@@ -229,32 +229,24 @@
                         opt.style.color = "";
                     }
                 }
-                if (vrxType === "rapid-fire" && (bandSelect.value === "LL")) {
+                if (vrxType === "rapid-fire" && (bandSelect.value === "X" || bandSelect.value === "LL")) {
                     bandSelect.value = "A";
                 }
             }
         }
 
         function updateTypeAvailability() {
-            const vrxType = document.getElementById('vrx_type').value;
             const typeSelect = document.getElementById('type');
-            const currentType = typeSelect.value;
-            const channelOnlyTypes = ['rapid-fire', 'Skyzone_UART'];
-            const allTypesAvailable = ['TBS_Fusion', 'rx5808', 'Dec_vrx'];
-            if (channelOnlyTypes.includes(vrxType)) {
-                typeSelect.innerHTML = '<option value="channel_band">Канал та бенд</option>';
-                typeSelect.value = 'channel_band';
-                updateFields();
-            } else if (allTypesAvailable.includes(vrxType)) {
-                typeSelect.innerHTML = `
-                    <option value="frequency">Частота</option>
-                    <option value="channel_band">Канал та бенд</option>
-                `;
-                if (currentType === 'frequency' || currentType === 'channel_band') {
-                    typeSelect.value = currentType;
-                }
-                updateFields();
+            // Всі типи приймачів мають frequency disabled!
+            typeSelect.innerHTML = `
+                <option value="frequency" disabled style="color:#bbb;">Частота</option>
+                <option value="channel_band">Канал та бенд</option>
+            `;
+            // Примусово вибираємо channel_band, якщо frequency був вибраний
+            if (typeSelect.value !== "channel_band") {
+                typeSelect.value = "channel_band";
             }
+            updateFields();
             updateBandOptions();
         }
 
@@ -269,6 +261,16 @@
                     <input type="number" id="freq${i}" placeholder="Частота" min="4900" max="6100">
                 `;
                 container.appendChild(wrapper);
+
+                // Live-валідація для частоти
+                const input = wrapper.querySelector('input');
+                input.addEventListener('input', function() {
+                    if (this.value !== "") {
+                        let val = parseInt(this.value, 10);
+                        if (val < 4900) this.value = 4900;
+                        if (val > 6100) this.value = 6100;
+                    }
+                });
             }
         }
 
@@ -418,9 +420,8 @@
                     if (config.aux_divider !== undefined) {
                         document.getElementById('aux_divider').value = config.aux_divider;
                     }
-                    if (config.type) {
-                        document.getElementById('type').value = config.type;
-                    }
+                    // type завжди channel_band
+                    document.getElementById('type').value = 'channel_band';
 
                     updateFields();
 
@@ -450,4 +451,3 @@
     </script>
 </body>
 </html>
-

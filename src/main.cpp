@@ -6,6 +6,13 @@
 #include <Preferences.h>
 #include <LittleFS.h>
 
+
+#define LED_PIN 2 // D2 на твоїй платі
+
+volatile bool systemActive = false;   // глобальний флаг (робить loop простіше)
+unsigned long lastBlink = 0;
+bool ledState = false;
+
 #define BUTTON_PIN 0 // Використовуємо BOOT кнопку на ESP32
 
 const char* ssid = "vrx_control";
@@ -251,7 +258,7 @@ void activateSystem() {
     IPAddress subnet(255, 255, 255, 0);
 
     WiFi.softAPConfig(apIP, gateway, subnet);
-    WiFi.softAP("VRX-Config", "freeAzov");
+    WiFi.softAP("VRX-Config", "12345678");
 
     Serial.println("WiFi AP піднято!");
     Serial.print("AP IP address: ");
@@ -262,7 +269,11 @@ void activateSystem() {
     Serial.println("Веб-сервер запущено!");
     Serial.print("http://");
     Serial.println(WiFi.softAPIP());
+    
+    // Встановлюємо прапорець активності системи
+    systemActive = true;
 }
+
 
 
 void setup() {
@@ -275,14 +286,20 @@ void setup() {
     loadConfig();
     printConfig();
     pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW); // LED вимкнено при старті
 }
 
 // --- Логіка затиснення кнопки у loop() ---
 void loop() {
-    static bool systemActive = false;
     static unsigned long buttonDownTime = 0;
     static bool buttonWasDown = false;
+    static unsigned long lastBlink = 0;
+    static bool ledState = false;
+
+    // КНОПКА: активуємо систему по довгому натисненню (3 сек)
     if (!systemActive) {
+        digitalWrite(LED_PIN, LOW); // LED завжди вимкнений коли система не активна
         if (digitalRead(BUTTON_PIN) == LOW) {
             if (!buttonWasDown) {
                 buttonDownTime = millis();
@@ -297,6 +314,14 @@ void loop() {
             }
         } else {
             buttonWasDown = false;
+        }
+    } else {
+        // МИГОТІННЯ LED поки вебморда активна
+        unsigned long now = millis();
+        if (now - lastBlink > 250) { // раз на 250 мс (4 рази на сек)
+            ledState = !ledState;
+            digitalWrite(LED_PIN, ledState ? HIGH : LOW);
+            lastBlink = now;
         }
     }
 }
