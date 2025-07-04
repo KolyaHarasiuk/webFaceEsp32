@@ -221,7 +221,7 @@
                 if (!bandSelect) continue;
                 for (let j = 0; j < bandSelect.options.length; j++) {
                     const opt = bandSelect.options[j];
-                    if (vrxType === "rapid-fire" && (opt.value === "X" || opt.value === "LL")) {
+                    if ((vrxType === "rapid-fire" || vrxType === "Skyzone_UART") && (opt.value === "LL")) {
                         opt.disabled = true;
                         opt.style.color = "#bbb";
                     } else {
