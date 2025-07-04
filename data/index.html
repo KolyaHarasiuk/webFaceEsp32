@@ -229,7 +229,7 @@
                         opt.style.color = "";
                     }
                 }
-                if (vrxType === "rapid-fire" && (bandSelect.value === "X" || bandSelect.value === "LL")) {
+                if ((vrxType === "rapid-fire" || vrxType === "Skyzone_UART") && (bandSelect.value === "LL")) {
                     bandSelect.value = "A";
                 }
             }
