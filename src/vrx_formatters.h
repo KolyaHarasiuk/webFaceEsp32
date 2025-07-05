@@ -2,6 +2,8 @@
 #define VRX_FORMATTERS_H
 
 #include <Arduino.h>
+#include "vrx_types.h"
+
 
 // Таблиця частот для перетворення каналів у частоти
 const uint16_t frequencyTable[9][8] = {
@@ -38,12 +40,25 @@ int getBandIndex(const String& band) {
     if (band == "S") return 9;
     return 1; // За замовчуванням Band A
 }
- 
+inline String getBandName(int bandNumber) {
+    switch(bandNumber) {
+        case 1: return "A";
+        case 2: return "B";
+        case 3: return "E";
+        case 4: return "F";
+        case 5: return "R";
+        case 6: return "L";
+        case 7: return "X";
+        case 8: return "LL";
+        case 9: return "S";
+        default: return "";
+    }
+}
 // Функція для перетворення каналу та бенду в частоту
 uint16_t channelToFrequency(const String& band, uint8_t channel) {
     if (channel < 1 || channel > 8) return 5800; // Значення за замовчуванням
     int bandIdx = getBandIndex(band);
-    return frequencyTable[bandIdx][channel - 1];
+    return frequencyTable[bandIdx - 1][channel - 1];
 }
 
 // Формат для RX5808

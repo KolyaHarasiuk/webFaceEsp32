@@ -202,10 +202,10 @@
         function updateSTM32Status(state) {
             const statusDiv = document.getElementById('stm32-status');
             if (state === "connected") {
-                statusDiv.textContent = 'Connect';
+                statusDiv.textContent = 'CONNECTED';
                 statusDiv.className = 'stm32-status connected';
             } else if (state === "not_connected" || state === "error") {
-                statusDiv.textContent = 'Error';
+                statusDiv.textContent = 'ERROR_STM32_NOT_CONNECTED';
                 statusDiv.className = 'stm32-status error';
             } else {
                 statusDiv.textContent = '-';
@@ -440,7 +440,8 @@
                             if (channelSelect) channelSelect.value = channel;
                         });
                     }
-                    updateSTM32Status("connected");
+                    // Використовуємо статус з відповіді сервера
+                    updateSTM32Status(config.stm32 || "error");
                 } else {
                     updateSTM32Status("error");
                 }
